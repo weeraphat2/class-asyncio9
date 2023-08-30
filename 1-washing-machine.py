@@ -48,33 +48,16 @@ async def CoroWashingMachine(w, client):
         wait_next = round(10*random.random(),2)
         print(f"{time.ctime()} - [{w.SERIAL}] Waiting to start... {wait_next} seconds.")
         await asyncio.sleep(wait_next)
-        if w.MACHINE_STATUS == 'OFF':
-            continue
-        if w.MACHINE_STATUS == 'ON':
-
-            await publish_message(w, client, "app", "get", "STATUS", "START")
-
-            # add more status
-
-            # add more status
-
-            await publish_message(w, client, "app", "get", "STATUS", "POWER OFF")
-            w.MACHINE_STATUS = 'OFF'
+        
 
 async def listen(w, client):
     async with client.messages() as messages:
         await client.subscribe(f"v1cdti/hw/set/{student_id}/model-01/{w.SERIAL}")
-        async for message in messages:
-            m_decode = json.loads(message.payload)
-            if message.topic.matches(f"v1cdti/hw/set/{student_id}/model-01/{w.SERIAL}"):
-                # set washing machine status
-                print(f"{time.ctime()} - MQTT - [{m_decode['serial']}]:{m_decode['name']} => {m_decode['value']}")
+        
 
 
 async def main():
-    w1 = WashingMachine(serial='SN-001')
-    async with aiomqtt.Client("test.mosquitto.org") as client:
-        await asyncio.gather(listen(w1, client) , CoroWashingMachine(w1, client)
-                             )
+    w = WashingMachine(serial='SN-001')
+    
 
 asyncio.run(main())
