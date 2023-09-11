@@ -7,7 +7,7 @@ from enum import Enum
 import sys
 import os
 
-student_id = "6310301006"
+student_id = "6310301022"
 
 class MachineStatus(Enum):
     pressure = round(random.uniform(2000,3000), 2)
