@@ -55,7 +55,6 @@ class MachineMaintStatus(Enum):
 class WashingMachine:
     def __init__(self, serial):
         self.SERIAL = serial
-        self.STATE = 'OFF'
         self.Task = None
         self.event = asyncio.Event()
 
@@ -73,14 +72,6 @@ async def CoroWashingMachine(w, client):
             print(f"{time.ctime()} - [{w.SERIAL}-{w.STATE}] Waiting to start... {wait_next} seconds.")
             await asyncio.sleep(wait_next)
             continue
-
-        if w.STATE == S_READY:
-            print(f"{time.ctime()} - [{w.SERIAL}-{w.STATE}]")
-
-            await publish_message(w, client, "app", "get", "STATUS", "READY")
-            # door close
-            
-            # fill water untill full level detected within 10 seconds if not full then timeout 
             try:
                 async with asyncio.timeout(10):
                     await fillwater(w)
@@ -109,7 +100,6 @@ async def CoroWashingMachine(w, client):
 
 async def listen(w, client):
     async with client.messages() as messages:
-        print(f"{time.ctime()} - SUB topic: v1cdti/hw/set/{student_id}/model-01/{w.SERIAL}")
         await client.subscribe(f"v1cdti/hw/set/{student_id}/model-01/{w.SERIAL}")
         async for message in messages:
             m_decode = json.loads(message.payload)
