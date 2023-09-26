@@ -4,8 +4,10 @@ import json
 import asyncio
 import aiomqtt
 from enum import Enum
+import sys
+import os
 
-student_id = "6300001"
+student_id = "6310301022"
 
 # State 
 S_OFF       = 'OFF'
@@ -165,5 +167,11 @@ async def main():
         c = [CoroWashingMachine(w, client) for w in wl]
 
         await asyncio.gather(*l , *c)
+
+# Change to the "Selector" event loop if platform is Windows
+if sys.platform.lower() == "win32" or os.name.lower() == "nt":
+    from asyncio import set_event_loop_policy, WindowsSelectorEventLoopPolicy
+    set_event_loop_policy(WindowsSelectorEventLoopPolicy())
+# Run your async application as usual
 
 asyncio.run(main())
